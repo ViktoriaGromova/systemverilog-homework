@@ -6,10 +6,6 @@ module posedge_detector (input clk, rst, a, output detected);
 
   logic a_r;
 
-  // Note:
-  // The a_r flip-flop input value d propogates to the output q
-  // only on the next clock cycle.
-
   always_ff @ (posedge clk)
     if (rst)
       a_r <= '0;
@@ -26,13 +22,22 @@ endmodule
 
 module one_cycle_pulse_detector (input clk, rst, a, output detected);
 
-  // Task:
-  // Create an one cycle pulse (010) detector.
-  //
-  // Note:
-  // See the testbench for the output format ($display task).
 
+  logic a1;
+  logic a2;
 
+  always_ff @ (posedge clk)
+    begin
+      if (rst) begin
+        a1 <= '0;
+        a2 <= '0;
+      end else begin
+        a1 <= a;
+        a2 <= a1;
+      end
+    end
+
+  assign detected = ~ a2_r & a1_r & ~ a;
 endmodule
 
 //----------------------------------------------------------------------------
@@ -45,10 +50,13 @@ module testbench;
 
   initial
   begin
+    $dumpfile("dump.vcd");
+    $dumpvars(0, testbench);
+
     clk = '0;
 
     forever
-      # 500 clk = ~ clk;
+      # 10 clk = ~ clk;
   end
 
   logic rst;
