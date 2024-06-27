@@ -18,9 +18,19 @@ endmodule
 
 module signed_add_with_saturation
 (
-  input  [3:0] a, b,
-  output [3:0] sum
+  input  logic signed [3:0] a, b,
+  output logic signed [3:0] sum
 );
+
+  always_comb 
+  begin
+    sum = a + b;
+    if (a[3] & b[3] & !sum[3]) 
+      sum = -4'd8;
+    else if (!a[3] & !b[3] & sum[3])
+      sum = 4'd7;
+    
+  end
   // Task:
   //
   // Implement a module that adds two signed numbers with saturation.
