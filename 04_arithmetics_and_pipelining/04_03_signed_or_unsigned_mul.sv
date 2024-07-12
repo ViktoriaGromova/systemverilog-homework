@@ -66,16 +66,16 @@ module signed_or_unsigned_mul #(
   logic signed [2*n - 1:0] signed_result;
   logic [2*n - 1:0] unsigned_result;
 
-      signed_mul #(n) sign_mul (
-          .a  (a),
-          .b  (b),
-          .res(signed_result)
-      );
-      unsigned_mul #(n) unsign_mul (
-          .a  (a),
-          .b  (b),
-          .res(unsigned_result)
-      );
+  signed_mul #(n) sign_mul (
+      .a  (a),
+      .b  (b),
+      .res(signed_result)
+  );
+  unsigned_mul #(n) unsign_mul (
+      .a  (a),
+      .b  (b),
+      .res(unsigned_result)
+  );
 
   assign res = signed_mul ? signed_result : unsigned_result;
 
