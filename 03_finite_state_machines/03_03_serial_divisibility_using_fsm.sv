@@ -49,6 +49,10 @@ endmodule
 //----------------------------------------------------------------------------
 // Task
 //----------------------------------------------------------------------------
+// Implement a module that performs a serial test if input number is divisible by 5.
+//
+// On each clock cycle, module recieves the next 1 bit of the input number.
+// The module should set output to 1 if the currently known number is divisible by 5.
 
 module serial_divisibility_by_5_using_fsm
 (
@@ -58,17 +62,40 @@ module serial_divisibility_by_5_using_fsm
   output div_by_5
 );
 
-  // Implement a module that performs a serial test if input number is divisible by 5.
-  //
-  // On each clock cycle, module recieves the next 1 bit of the input number.
-  // The module should set output to 1 if the currently known number is divisible by 5.
-  //
-  // Hint: new bit is coming to the right side of the long binary number `X`.
-  // It is similar to the multiplication of the number by 2*X or by 2*X + 1.
-  //
-  // Hint 2: As we are interested only in the remainder, all operations are performed under the modulo 5 (% 5).
-  // Check manually how the remainder changes under such modulo.
+enum logic[2:0]
+  {
+     mod_0 = 3'b000,
+     mod_1 = 3'b001,
+     mod_2 = 3'b010,
+     mod_3 = 3'b011,
+     mod_4 = 3'b100
+  }
+  state, new_state;
 
+  always_comb
+  begin
+    new_state = state;
+
+    case (state)
+      mod_0 : if(new_bit) new_state = mod_1;
+      mod_1 : if(new_bit) new_state = mod_3;
+              else        new_state = mod_2;
+      mod_2 : if(new_bit) new_state = mod_0;
+              else        new_state = mod_4;
+      mod_3 : if(new_bit) new_state = mod_2;
+              else        new_state = mod_1;
+      mod_4 : if(new_bit) new_state = mod_4;
+              else        new_state = mod_3;
+    endcase
+  end
+
+  assign div_by_5 = state == mod_0;
+
+always_ff @ (posedge clk)
+  if (rst)
+    state <= mod_0;
+  else
+    state <= new_state;
 
 endmodule
 
